@@ -11,16 +11,48 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* instruction fetch */
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
-{
+{   
 
+    *instruction = (MEM(PC));
+    return 0;
 }
 
 
 /* instruction partition */
 /* 10 Points */
+
+// Bit mask generator
+
+unsigned generate_mask(int start, int length) {
+    return ((1 << length) - 1) << (start - length + 1);
+}
+
 void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsigned *r2, unsigned *r3, unsigned *funct, unsigned *offset, unsigned *jsec)
 {
+    unsigned op_mask = generate_mask(32, 7);
+    unsigned r1_mask = generate_mask(26, 6);
+    unsigned r2_mask = generate_mask(21, 6);
+    unsigned r3_mask = generate_mask(16, 6);
+    unsigned funct_mask = generate_mask(6, 7);
+    unsigned offset_mask = generate_mask(16, 17);
+    unsigned jsec_mask = generate_mask(26, 27);
 
+    printf("%08x \n", instruction);
+    *op = (instruction & op_mask) >> 26;
+    *r1 = (instruction & r1_mask) >> 21;
+    *r2 = (instruction & r2_mask) >> 16;
+    *r3 = (instruction & r3_mask) >> 11;
+    *funct = (instruction & funct_mask);
+    *offset = (instruction & offset_mask);
+    *jsec = (instruction & jsec_mask);
+
+    printf("%u \n", *op);
+    printf("%u \n", *r1);
+    printf("%u \n", *r2);
+    printf("%u \n", *r3);
+    printf("%u \n", *funct);
+    printf("%u \n", *offset);
+    printf("%u", *jsec);
 }
 
 
@@ -29,7 +61,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
-
+    return 0;
 }
 
 /* Read Register */
@@ -51,14 +83,14 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
-
+    return 0;
 }
 
 /* Read / Write Memory */
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
-
+    return 0;
 }
 
 
@@ -73,6 +105,6 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
 {
-
+    *PC += 4;
 }
 
