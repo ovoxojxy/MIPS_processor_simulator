@@ -6,13 +6,23 @@
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
 
+    
 }
 
 /* instruction fetch */
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
+    if(PC % 4 != 0 || Mem[PC] == 0) //check if word-aligned and PC is within bounds
+    {
+        return 1;   //halt if invalid PC
+    }
 
+    //Set instruction at the right index (shifted) to the address at Mem(PC)
+    //reference: pg 18 of Project overview and hints
+    instruction[PC >> 2] = Mem[PC];   
+    
+    return 0;
 }
 
 
