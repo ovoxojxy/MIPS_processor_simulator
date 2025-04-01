@@ -68,8 +68,13 @@ int instruction_decode(unsigned op,struct_controls *controls)
 /* 5 Points */
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
-    // Read registers addressed by r1 and r2
+    // Read registers addressed by r1 and r2 from Reg
     // Write read values to data1 and data2
+    
+    *data1 = Reg[r1];
+    printf("data 1 = %u\n", data1); // Debug to check data 1
+    *data2 = Reg[r2];
+    printf("data 2 = %u\n", data2); // Debug to check data 2
 }
 
 
