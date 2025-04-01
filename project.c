@@ -68,7 +68,8 @@ int instruction_decode(unsigned op,struct_controls *controls)
 /* 5 Points */
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
-
+    // Read registers addressed by r1 and r2
+    // Write read values to data1 and data2
 }
 
 
@@ -76,7 +77,7 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-
+    // Assign sign extended value of offset to extended_value
 }
 
 /* ALU operations */
