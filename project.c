@@ -13,8 +13,6 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {   
 
-    *instruction = (MEM(PC));
-    return 0;
 }
 
 
@@ -24,6 +22,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 // Bit mask generator
 
 unsigned generate_mask(int start, int length) {
+
     return ((1 << length) - 1) << (start - length + 1);
 }
 
@@ -37,7 +36,6 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
     unsigned offset_mask = generate_mask(16, 17);
     unsigned jsec_mask = generate_mask(26, 27);
 
-    printf("%08x \n", instruction);
     *op = (instruction & op_mask) >> 26;
     *r1 = (instruction & r1_mask) >> 21;
     *r2 = (instruction & r2_mask) >> 16;
@@ -45,14 +43,6 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
     *funct = (instruction & funct_mask);
     *offset = (instruction & offset_mask);
     *jsec = (instruction & jsec_mask);
-
-    printf("%u \n", *op);
-    printf("%u \n", *r1);
-    printf("%u \n", *r2);
-    printf("%u \n", *r3);
-    printf("%u \n", *funct);
-    printf("%u \n", *offset);
-    printf("%u", *jsec);
 }
 
 
@@ -105,6 +95,6 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
 {
-    *PC += 4;
+    
 }
 
