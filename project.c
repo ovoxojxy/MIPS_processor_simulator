@@ -14,18 +14,15 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
 
-    if(PC % 4 != 0 || Mem[PC] == 0) //check if word-aligned and PC is within bounds
+    if(PC % 4 == 0) //check if word-aligned
     {
-        printf("Halt = 1\n"); //TEST PRINT
-        
-        return 1;   //halt if invalid PC
-    }
+        *instruction = Mem[PC >> 2];
 
-    //Set instruction at the right index (shifted) to the address at Mem(PC)
-    //reference: pg 18 of Project overview and hints
-    instruction[PC >> 2] = Mem[PC];  
+        return 0;  
+    }
     
-    return 0;
+    printf("halt = 1\n"); //test print
+    return 1;
 }
 
 
