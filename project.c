@@ -6,13 +6,23 @@
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
 
+    
 }
 
 /* instruction fetch */
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
-{   
+{
 
+    if(PC % 4 == 0) //check if word-aligned
+    {
+        *instruction = Mem[PC >> 2];
+
+        return 0;  
+    }
+    
+    printf("halt = 1\n"); //test print
+    return 1;
 }
 
 
@@ -58,7 +68,13 @@ int instruction_decode(unsigned op,struct_controls *controls)
 /* 5 Points */
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
-
+    // Read registers addressed by r1 and r2 from Reg
+    // Write read values to data1 and data2
+    
+    *data1 = Reg[r1];
+    printf("data 1 = %u\n", data1); // Debug to check data 1
+    *data2 = Reg[r2];
+    printf("data 2 = %u\n", data2); // Debug to check data 2
 }
 
 
@@ -66,7 +82,7 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-
+    // Assign sign extended value of offset to extended_value
 }
 
 /* ALU operations */
