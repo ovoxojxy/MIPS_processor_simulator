@@ -96,7 +96,21 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
-    return 0;
+    if(!MemWrite && !MemRead){  //checks if neither MemWrite nor MemRead is occurring
+        return  0;
+    }
+    if(ALUresult % 4 != 0) { //check for word alignment on address
+        return 1;   //returns 1 for halt if not word aligned
+    }    
+    unsigned index = ALUresult / 4; //convert ALUresult from byte address to word index
+
+    if(MemRead == 1){
+        *memdata = Mem[index];  //reads the content in the memory location to memdata
+    }
+    if(MemWrite == 1){            
+        Mem[index] = data2;   //writes value of data2 to memory location
+    }
+    return 0;   //no halt condition occurs
 }
 
 
@@ -104,7 +118,28 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 /* 10 Points */
 void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,char RegWrite,char RegDst,char MemtoReg,unsigned *Reg)
 {
-
+    if(RegWrite && MemtoReg == 1) { //write data from memory
+        unsigned dest;
+        if(RegDst == 1){  //determines the destination register
+            dest = r3;
+        } else {
+            dest = r2;
+        }
+        if(dest != 0) {   //write to registers other than $zero
+            Reg[dest] = medata;
+        }
+    }
+    if(RegWrite == 1 && MemtoReg == 0) { //write data from ALUresult
+        unsigned dest;
+        if(RegDst == 1) {  //determines the destination register
+            dest = r3;
+        } else {
+            dest = r2;
+        }
+        if(dest != 0) {  //write to registers other than $zero
+            Reg[dest] = ALUresult;
+        }
+    }
 }
 
 /* PC update */
