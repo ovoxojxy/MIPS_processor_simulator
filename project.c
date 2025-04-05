@@ -5,7 +5,46 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
+    int Z = 0;
+    switch (ALUControl)
+    {
+        case 0b000:     //Z = A + B
+            Z = A + B;
+            break;
+        case 0b001:     //Z = A - B
+            Z = A - B;
+            break;
+        case 0b010:     //Z = 1 if A < B
+            Z = (A < B);
+            break;
+        case 0b011:     //Z = 1 if A < B (unsigned)
+            Z = (A < B);
+            break;
+        case 0b100:     //A AND B
+            if(A == 1 && B == 1)
+                Z = 1;      
+            break;
+        case 0b101:     //A OR B
+            if(A == 1 || B == 1)
+                Z = 1;
+            break;
+        case 0b110:     //Z = Shift B left by 16 bits
+            Z = B<< 16;
+            break;
+        case 0b111:     //Z = NOT A
+            Z = (!A);
+            break;
 
+        //What to put as default case?
+
+    }
+    
+    //assign ALUresult and Zero
+    *ALUresult = Z;
+    if(Z == 0)
+        *Zero = 1;
+    else 
+        *Zero = 0;    
     
 }
 
@@ -72,9 +111,9 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
     // Write read values to data1 and data2
     
     *data1 = Reg[r1];
-    printf("data 1 = %u\n", data1); // Debug to check data 1
+    printf("data 1 = %ls\n", data1); // Debug to check data 1
     *data2 = Reg[r2];
-    printf("data 2 = %u\n", data2); // Debug to check data 2
+    printf("data 2 = %ls\n", data2); // Debug to check data 2
 }
 
 
@@ -126,7 +165,7 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
             dest = r2;
         }
         if(dest != 0) {   //write to registers other than $zero
-            Reg[dest] = medata;
+            Reg[dest] = memdata;
         }
     }
     if(RegWrite == 1 && MemtoReg == 0) { //write data from ALUresult
