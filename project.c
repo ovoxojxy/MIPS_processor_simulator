@@ -29,10 +29,10 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
                 Z = 1;
             break;
         case 0b110:     //Z = Shift B left by 16 bits
-            Z = B<< 16;
+            Z = B << 16;
             break;
         case 0b111:     //Z = NOT A
-            Z = (!A);
+            Z = (~A);
             break;
 
         //What to put as default case?
