@@ -21,12 +21,10 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
             Z = (A < B);
             break;
         case 0b100:     //A AND B
-            if(A == 1 && B == 1)
-                Z = 1;      
+            Z = A & B;    
             break;
         case 0b101:     //A OR B
-            if(A == 1 || B == 1)
-                Z = 1;
+            Z = A | B;
             break;
         case 0b110:     //Z = Shift B left by 16 bits
             Z = B << 16;
@@ -41,6 +39,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
     
     //assign ALUresult and Zero
     *ALUresult = Z;
+
     if(Z == 0)
         *Zero = 1;
     else 
