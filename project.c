@@ -183,8 +183,19 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 
 /* PC update */
 /* 10 Points */
-void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
+void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, char Zero, unsigned *PC)
 {
-    
+    *PC += 4;  // move it to the next instruction
+
+    if (Branch && Zero)
+    {
+        *PC += (extended_value << 2);  // branch the target
+    }
+
+    if (Jump)
+    {
+        *PC = (*PC & 0xF0000000) | (jsec << 2);  // jump the target address
+    }
 }
+
 
