@@ -110,9 +110,9 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
     // Write read values to data1 and data2
     
     *data1 = Reg[r1];
-    printf("data 1 = %ls\n", data1); // Debug to check data 1
+    // printf("data 1 = %ls\n", data1); // Debug to check data 1
     *data2 = Reg[r2];
-    printf("data 2 = %ls\n", data2); // Debug to check data 2
+    // printf("data 2 = %ls\n", data2); // Debug to check data 2
 }
 
 
