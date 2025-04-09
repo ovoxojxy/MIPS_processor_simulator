@@ -99,6 +99,131 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
+    /* instruction decode */
+/* 15 Points */
+int instruction_decode(unsigned op,struct_controls *controls)
+{
+
+    if (op == 2){
+        // Jump signal control
+        controls->RegDst = '2';
+        controls->Jump = '1';
+        controls->Branch = '0';
+        controls->MemRead = '0';
+        controls->MemtoReg = '2';
+        controls->ALUOp = '0';
+        controls->MemWrite = '0';
+        controls->ALUSrc = '2';
+        controls->RegWrite = '0';
+        printf("Jump\n\n");
+    } else if (op == 0){
+        // R-type signal controls
+        controls->RegDst = '1';
+        controls->Jump = '0';
+        controls->Branch = '0';
+        controls->MemRead = '0';
+        controls->MemtoReg = '0';
+        controls->ALUOp = '2';  
+        controls->MemWrite = '0';
+        controls->ALUSrc = '0';
+        controls->RegWrite = '1';
+        printf("R-type\n\n");
+    } else {
+        switch(op) {
+            case 43:
+                // store word
+                controls->RegDst = '2';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '2';
+                controls->ALUOp = '0';  
+                controls->MemWrite = '1';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '0';
+                printf("Store word\n\n");
+                break;
+            case 35:
+                // load word 
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '1';
+                controls->MemtoReg = '1';
+                controls->ALUOp = '0';  
+                controls->MemWrite = '1';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("load word\n\n");
+                break;
+            case 15:
+                // load upper immediate
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '0';
+                controls->ALUOp = '2';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("load upper immediate\n\n");
+                break;
+            case 8:
+                // add immediate
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '0';
+                controls->ALUOp = '0';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("add immediate\n\n");
+                break;
+            case 10:
+                // set less than immediate
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '0';
+                controls->ALUOp = '3';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("set less than immediate\n\n");
+                break;
+            case 4:
+                // branch on equal
+                controls->RegDst = '2';
+                controls->Jump = '0';
+                controls->Branch = '1';
+                controls->MemRead = '0';
+                controls->MemtoReg = '2';
+                controls->ALUOp = '1';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '0';
+                controls->RegWrite = '0';
+                printf("branch on equal\n\n");
+                break;
+            case 11:
+                // set less than immediate
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '0';
+                controls->ALUOp = '3';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("set less than immediate unsigned\n\n");
+            default:
+                return 1;
+        }
+    }
     return 0;
 }
 
