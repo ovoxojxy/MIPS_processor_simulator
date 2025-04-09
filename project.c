@@ -258,8 +258,36 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 
 /* ALU operations */
 /* 10 Points */
-int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
+int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
+                   unsigned funct, char ALUOp, char ALUSrc,
+                   unsigned *ALUresult, char *Zero)
 {
+    unsigned operand2 = ALUSrc ? extended_value : data2;
+    char ALUControl;
+
+    if (ALUOp == 0)        // LW or SW
+        ALUControl = 0b000;
+    else if (ALUOp == 1)   // BEQ
+        ALUControl = 0b001;
+    else if (ALUOp == 2)   // The R-type instruction
+    {
+        switch (funct)
+        {
+            case 32: ALUControl = 0b000; break;  // ADD
+            case 34: ALUControl = 0b001; break;  // SUB
+            case 42: ALUControl = 0b010; break;  // SLT
+            case 43: ALUControl = 0b011; break;  // SLTU
+            case 36: ALUControl = 0b100; break;  // AND
+            case 37: ALUControl = 0b101; break;  // OR
+            case 0:  ALUControl = 0b110; break;  // SLL (shift left)
+            case 39: ALUControl = 0b111; break;  // NOR (use NOT here)
+            default: return 1; // Invalid funct
+        }
+    }
+    else
+        return 1; // Invalid ALUOp
+
+    ALU(data1, operand2, ALUControl, ALUresult, Zero);
     return 0;
 }
 
