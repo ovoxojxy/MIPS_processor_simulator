@@ -99,6 +99,127 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
+
+    if (op == 2){
+        // Jump signal control
+        controls->RegDst = '2';
+        controls->Jump = '1';
+        controls->Branch = '0';
+        controls->MemRead = '0';
+        controls->MemtoReg = '2';
+        controls->ALUOp = '0';
+        controls->MemWrite = '0';
+        controls->ALUSrc = '2';
+        controls->RegWrite = '0';
+        printf("Jump\n\n");
+    } else if (op == 0){
+        // R-type signal controls
+        controls->RegDst = '1';
+        controls->Jump = '0';
+        controls->Branch = '0';
+        controls->MemRead = '0';
+        controls->MemtoReg = '0';
+        controls->ALUOp = '2';  
+        controls->MemWrite = '0';
+        controls->ALUSrc = '0';
+        controls->RegWrite = '1';
+        printf("R-type\n\n");
+    } else {
+        switch(op) {
+            case 43:
+                // store word
+                controls->RegDst = '2';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '2';
+                controls->ALUOp = '0';  
+                controls->MemWrite = '1';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '0';
+                printf("Store word\n\n");
+                break;
+            case 35:
+                // load word 
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '1';
+                controls->MemtoReg = '1';
+                controls->ALUOp = '0';  
+                controls->MemWrite = '1';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("load word\n\n");
+                break;
+            case 15:
+                // load upper immediate
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '0';
+                controls->ALUOp = '2';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("load upper immediate\n\n");
+                break;
+            case 8:
+                // add immediate
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '0';
+                controls->ALUOp = '0';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("add immediate\n\n");
+                break;
+            case 10:
+                // set less than immediate
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '0';
+                controls->ALUOp = '3';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("set less than immediate\n\n");
+                break;
+            case 4:
+                // branch on equal
+                controls->RegDst = '2';
+                controls->Jump = '0';
+                controls->Branch = '1';
+                controls->MemRead = '0';
+                controls->MemtoReg = '2';
+                controls->ALUOp = '1';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '0';
+                controls->RegWrite = '0';
+                printf("branch on equal\n\n");
+                break;
+            case 11:
+                // set less than immediate
+                controls->RegDst = '0';
+                controls->Jump = '0';
+                controls->Branch = '0';
+                controls->MemRead = '0';
+                controls->MemtoReg = '0';
+                controls->ALUOp = '3';  
+                controls->MemWrite = '0';
+                controls->ALUSrc = '1';
+                controls->RegWrite = '1';
+                printf("set less than immediate unsigned\n\n");
+            default:
+                return 1;
+        }
+    }
     return 0;
 }
 
@@ -110,9 +231,9 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
     // Write read values to data1 and data2
     
     *data1 = Reg[r1];
-    // printf("data 1 = %ls\n", data1); // Debug to check data 1
+    printf("data 1 = %ls\n", data1); // Debug to check data 1
     *data2 = Reg[r2];
-    // printf("data 2 = %ls\n", data2); // Debug to check data 2
+    printf("data 2 = %ls\n", data2); // Debug to check data 2
 }
 
 
@@ -121,12 +242,48 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
     // Assign sign extended value of offset to extended_value
+    
+    // Check if the left most bit is negative or positive
+    if(offset & (1 << 15)) {
+        *extended_value = offset | 0xFFFF0000; // Sign extend with 1s for negative
+    } else  {
+        *extended_value = offset & 0x0000FFFF; // If it's positive extend with 0s
+    }
+    
 }
 
 /* ALU operations */
 /* 10 Points */
-int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
+int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
+                   unsigned funct, char ALUOp, char ALUSrc,
+                   unsigned *ALUresult, char *Zero)
 {
+    unsigned operand2 = ALUSrc ? extended_value : data2;
+    char ALUControl;
+
+    if (ALUOp == 0)        // LW or SW
+        ALUControl = 0b000;
+    else if (ALUOp == 1)   // BEQ
+        ALUControl = 0b001;
+    else if (ALUOp == 2)   // The R-type instruction
+    {
+        switch (funct)
+        {
+            case 32: ALUControl = 0b000; break;  // ADD
+            case 34: ALUControl = 0b001; break;  // SUB
+            case 42: ALUControl = 0b010; break;  // SLT
+            case 43: ALUControl = 0b011; break;  // SLTU
+            case 36: ALUControl = 0b100; break;  // AND
+            case 37: ALUControl = 0b101; break;  // OR
+            case 0:  ALUControl = 0b110; break;  // SLL (shift left)
+            case 39: ALUControl = 0b111; break;  // NOR (use NOT here)
+            default: return 1; // Invalid funct
+        }
+    }
+    else
+        return 1; // Invalid ALUOp
+
+    ALU(data1, operand2, ALUControl, ALUresult, Zero);
     return 0;
 }
 
@@ -196,5 +353,3 @@ void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, c
         *PC = (*PC & 0xF0000000) | (jsec << 2);  // jump the target address
     }
 }
-
-
