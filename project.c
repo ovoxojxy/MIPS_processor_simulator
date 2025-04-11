@@ -242,7 +242,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
         controls->Branch = 0;
         controls->MemRead = 0;
         controls->MemtoReg = 0;
-        controls->ALUOp = 2;  
+        controls->ALUOp = 7;  
         controls->MemWrite = 0;
         controls->ALUSrc = 0;
         controls->RegWrite = 1;
@@ -389,11 +389,10 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
         ALUControl = 0b000;
     else if (ALUOp == 1)   // BEQ
         ALUControl = 0b001;
-    else if (ALUOp == 2)   // The R-type instruction
+    else if (ALUOp == 7)   // The R-type instruction
     {
         switch (funct)
         {
-            case 15: ALUControl = 0b110; break;  // Shift 16 for lui
             case 32: ALUControl = 0b000; break;  // ADD
             case 34: ALUControl = 0b001; break;  // SUB
             case 42: ALUControl = 0b010; break;  // SLT
@@ -404,6 +403,10 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
             case 39: ALUControl = 0b111; break;  // NOR (use NOT here)
             default: return 1; // Invalid funct
         }
+    }
+    else if(ALUOp == 2) //for load upper immediate
+    {
+        ALUControl = 0b110;
     }
     else
         return 1; // Invalid ALUOp
