@@ -6,6 +6,8 @@
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
     int Z = 0;
+    int a = A;
+    int b = B;
     switch (ALUControl)
     {
         case 0b000:     //Z = A + B
@@ -14,27 +16,27 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
         case 0b001:     //Z = A - B
             Z = A - B;
             break;
-        case 0b010:     //Z = 1 if A < B
-            Z = (A < B);
+        case 0b010:     //Z = 1 if A < B (signed)
+            Z = (a < b);
             break;
         case 0b011:     //Z = 1 if A < B (unsigned)
             Z = (A < B);
             break;
         case 0b100:     //A AND B
-            Z = A & B;    
+            Z = (A & B);    
             break;
         case 0b101:     //A OR B
-            Z = A | B;
+            Z = (A | B);
             break;
         case 0b110:     //Z = Shift B left by 16 bits
-            Z = B << 16;
+            Z = (B << 16);
             break;
         case 0b111:     //Z = NOT A
             Z = (~A);
             break;
-
-        //What to put as default case?
-
+        default:
+            return;
+            break;
     }
     
     //assign ALUresult and Zero
@@ -51,6 +53,10 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
+    if(PC > 0xFFFF) //check if PC is within memory bounds
+    {
+        return 1;
+    }
 
     if(PC % 4 == 0) //check if word-aligned
     {
@@ -59,7 +65,6 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
         return 0;  
     }
     
-    // printf("halt = 1\n"); //test print
     return 1;
 }
 
@@ -95,7 +100,11 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 
 
 
+<<<<<<< HEAD
 /* instruction decode */
+=======
+    /* instruction decode */
+>>>>>>> bec477a21a8c7519b98a92a21133e349b84ebf4e
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
@@ -111,7 +120,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
         controls->MemWrite = 0;
         controls->ALUSrc = 2;
         controls->RegWrite = 0;
-        //printf("Jump\n\n");
+
     } else if (op == 0){
         // R-type signal controls
         controls->RegDst = 1;
@@ -119,11 +128,11 @@ int instruction_decode(unsigned op,struct_controls *controls)
         controls->Branch = 0;
         controls->MemRead = 0;
         controls->MemtoReg = 0;
-        controls->ALUOp = 2;  
+        controls->ALUOp = 7;  
         controls->MemWrite = 0;
         controls->ALUSrc = 0;
         controls->RegWrite = 1;
-        //printf("R-type\n\n");
+
     } else {
         switch(op) {
             case 43:
@@ -137,7 +146,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
                 controls->MemWrite = 1;
                 controls->ALUSrc = 1;
                 controls->RegWrite = 0;
-                //printf("Store word\n\n");
+
                 break;
             case 35:
                 // load word 
@@ -150,7 +159,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
                 controls->MemWrite = 0;
                 controls->ALUSrc = 1;
                 controls->RegWrite = 1;
-                //printf("load word\n\n");
+
                 break;
             case 15:
                 // load upper immediate
@@ -163,7 +172,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
                 controls->MemWrite = 0;
                 controls->ALUSrc = 1;
                 controls->RegWrite = 1;
-                //printf("load upper immediate\n\n");
+
                 break;
             case 8:
                 // add immediate
@@ -176,7 +185,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
                 controls->MemWrite = 0;
                 controls->ALUSrc = 1;
                 controls->RegWrite = 1;
-                //printf("add immediate\n\n");
+
                 break;
             case 10:
                 // set less than immediate
@@ -189,7 +198,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
                 controls->MemWrite = 0;
                 controls->ALUSrc = 1;
                 controls->RegWrite = 1;
-                //printf("set less than immediate\n\n");
+
                 break;
             case 4:
                 // branch on equal
@@ -202,7 +211,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
                 controls->MemWrite = 0;
                 controls->ALUSrc = 0;
                 controls->RegWrite = 0;
-                //printf("branch on equal\n\n");
+
                 break;
             case 11:
                 // set less than immediate
@@ -215,7 +224,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
                 controls->MemWrite = 0;
                 controls->ALUSrc = 1;
                 controls->RegWrite = 1;
-                //printf("set less than immediate unsigned\n\n");
+
             default:
                 return 1;
         }
@@ -231,9 +240,7 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
     // Write read values to data1 and data2
     
     *data1 = Reg[r1];
-    //printf("data 1 = %u\n", *data1); // Debug to check data 1
     *data2 = Reg[r2];
-    //printf("data 2 = %u\n", *data2); // Debug to check data 2
 }
 
 
@@ -250,6 +257,10 @@ void sign_extend(unsigned offset,unsigned *extended_value)
         *extended_value = offset & 0x0000FFFF; // If it's positive extend with 0s
     }
     
+<<<<<<< HEAD
+=======
+    
+>>>>>>> bec477a21a8c7519b98a92a21133e349b84ebf4e
 }
 
 /* ALU operations */
@@ -258,14 +269,14 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
                    unsigned funct, char ALUOp, char ALUSrc,
                    unsigned *ALUresult, char *Zero)
 {
-    unsigned operand2 = ALUSrc ? extended_value : data2;
+
     char ALUControl;
 
     if (ALUOp == 0)        // LW or SW
         ALUControl = 0b000;
     else if (ALUOp == 1)   // BEQ
         ALUControl = 0b001;
-    else if (ALUOp == 2)   // The R-type instruction
+    else if (ALUOp == 7)   // The R-type instruction
     {
         switch (funct)
         {
@@ -280,13 +291,26 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
             default: return 1; // Invalid funct
         }
     }
+<<<<<<< HEAD
     else
         return 1; // Invalid ALUOp
 
     // printf("ALUOp = %d, ALUSrc = %d, Funct = %d\n", ALUOp, ALUSrc, funct);
     // printf("data1 = 0x%08X, data2 = 0x%08X, extended = 0x%08X\n", data1, data2, extended_value);
     
+=======
+    else if(ALUOp == 2) //for load upper immediate
+    {
+        ALUControl = 0b110;
+    }
+    else
+        return 1; // Invalid ALUOp
+
+
+    unsigned operand2 = ALUSrc ? extended_value : data2;
+>>>>>>> bec477a21a8c7519b98a92a21133e349b84ebf4e
     ALU(data1, operand2, ALUControl, ALUresult, Zero);
+
     return 0;
 }
 
@@ -294,6 +318,7 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
+
     if(!MemWrite && !MemRead){  //checks if neither MemWrite nor MemRead is occurring
         return  0;
     }
