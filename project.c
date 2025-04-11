@@ -100,11 +100,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 
 
 
-<<<<<<< HEAD
-/* instruction decode */
-=======
     /* instruction decode */
->>>>>>> bec477a21a8c7519b98a92a21133e349b84ebf4e
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
@@ -257,10 +253,7 @@ void sign_extend(unsigned offset,unsigned *extended_value)
         *extended_value = offset & 0x0000FFFF; // If it's positive extend with 0s
     }
     
-<<<<<<< HEAD
-=======
     
->>>>>>> bec477a21a8c7519b98a92a21133e349b84ebf4e
 }
 
 /* ALU operations */
@@ -291,14 +284,6 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
             default: return 1; // Invalid funct
         }
     }
-<<<<<<< HEAD
-    else
-        return 1; // Invalid ALUOp
-
-    // printf("ALUOp = %d, ALUSrc = %d, Funct = %d\n", ALUOp, ALUSrc, funct);
-    // printf("data1 = 0x%08X, data2 = 0x%08X, extended = 0x%08X\n", data1, data2, extended_value);
-    
-=======
     else if(ALUOp == 2) //for load upper immediate
     {
         ALUControl = 0b110;
@@ -308,7 +293,6 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
 
 
     unsigned operand2 = ALUSrc ? extended_value : data2;
->>>>>>> bec477a21a8c7519b98a92a21133e349b84ebf4e
     ALU(data1, operand2, ALUControl, ALUresult, Zero);
 
     return 0;
