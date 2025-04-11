@@ -23,13 +23,13 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
             Z = (A < B);
             break;
         case 0b100:     //A AND B
-            Z = A & B;    
+            Z = (A & B);    
             break;
         case 0b101:     //A OR B
-            Z = A | B;
+            Z = (A | B);
             break;
         case 0b110:     //Z = Shift B left by 16 bits
-            Z = B << 16;
+            Z = (B << 16);
             break;
         case 0b111:     //Z = NOT A
             Z = (~A);
@@ -53,6 +53,10 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
+    if(PC > 0xFFFF) //check if PC is within memory bounds
+    {
+        return 1;
+    }
 
     if(PC % 4 == 0) //check if word-aligned
     {
@@ -287,8 +291,10 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
     else
         return 1; // Invalid ALUOp
 
+
     unsigned operand2 = ALUSrc ? extended_value : data2;
     ALU(data1, operand2, ALUControl, ALUresult, Zero);
+
     return 0;
 }
 
@@ -296,6 +302,7 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
+
     if(!MemWrite && !MemRead){  //checks if neither MemWrite nor MemRead is occurring
         return  0;
     }
