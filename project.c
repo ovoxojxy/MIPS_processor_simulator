@@ -5,33 +5,34 @@
 /* 10 Points */
 void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 {
-    int Z = 0;
+    unsigned int Z = 0;
+    //a and b for signed comparison
     int a = A;
     int b = B;
     switch (ALUControl)
     {
-        case 0b000:     //Z = A + B
+        case 0:     //Z = A + B
             Z = A + B;
             break;
-        case 0b001:     //Z = A - B
+        case 1:     //Z = A - B
             Z = A - B;
             break;
-        case 0b010:     //Z = 1 if A < B (signed)
+        case 2:     //Z = 1 if A < B (signed)
             Z = (a < b);
             break;
-        case 0b011:     //Z = 1 if A < B (unsigned)
+        case 3:     //Z = 1 if A < B (unsigned)
             Z = (A < B);
             break;
-        case 0b100:     //A AND B
+        case 4:     //A AND B
             Z = (A & B);    
             break;
-        case 0b101:     //A OR B
+        case 5:     //A OR B
             Z = (A | B);
             break;
-        case 0b110:     //Z = Shift B left by 16 bits
+        case 6:     //Z = Shift B left by 16 bits
             Z = (B << 16);
             break;
-        case 0b111:     //Z = NOT A
+        case 7:     //Z = NOT A
             Z = (~A);
             break;
         default:
@@ -53,18 +54,15 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
-    if(PC > 0xFFFF) //check if PC is within memory bounds
-    {
-        return 1;
-    }
-
     if(PC % 4 == 0) //check if word-aligned
     {
+        //set instruction
         *instruction = Mem[PC >> 2];
 
         return 0;  
-    }
+    }   
     
+    //return halt if not word-aligned
     return 1;
 }
 
@@ -220,7 +218,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
                 controls->MemWrite = 0;
                 controls->ALUSrc = 1;
                 controls->RegWrite = 1;
-
+                break;
             default:
                 return 1;
         }
@@ -266,27 +264,27 @@ int ALU_operations(unsigned data1, unsigned data2, unsigned extended_value,
     char ALUControl;
 
     if (ALUOp == 0)        // LW or SW
-        ALUControl = 0b000;
+        ALUControl = 0;
     else if (ALUOp == 1)   // BEQ
-        ALUControl = 0b001;
+        ALUControl = 1;
     else if (ALUOp == 7)   // The R-type instruction
     {
         switch (funct)
         {
-            case 32: ALUControl = 0b000; break;  // ADD
-            case 34: ALUControl = 0b001; break;  // SUB
-            case 42: ALUControl = 0b010; break;  // SLT
-            case 43: ALUControl = 0b011; break;  // SLTU
-            case 36: ALUControl = 0b100; break;  // AND
-            case 37: ALUControl = 0b101; break;  // OR
-            case 0:  ALUControl = 0b110; break;  // SLL (shift left)
-            case 39: ALUControl = 0b111; break;  // NOR (use NOT here)
+            case 32: ALUControl = 0; break;  // ADD
+            case 34: ALUControl = 1; break;  // SUB
+            case 42: ALUControl = 2; break;  // SLT
+            case 43: ALUControl = 3; break;  // SLTU
+            case 36: ALUControl = 4; break;  // AND
+            case 37: ALUControl = 5; break;  // OR
+            case 0:  ALUControl = 6; break;  // SLL (shift left)
+            case 39: ALUControl = 7; break;  // NOR (use NOT here)
             default: return 1; // Invalid funct
         }
     }
     else if(ALUOp == 2) //for load upper immediate
     {
-        ALUControl = 0b110;
+        ALUControl = 6;
     }
     else
         return 1; // Invalid ALUOp
